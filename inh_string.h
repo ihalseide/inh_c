@@ -1,6 +1,6 @@
 // For more information such as usage and the license see the bottom of this file
 
-// Begin header code
+// --- Begin header code --- //
 
 #ifndef INH_INCLUDE_INH_STRING_H
 #define INH_INCLUDE_INH_STRING_H
@@ -32,14 +32,6 @@
     INH_STRING_DEF String * str_new_len (const char * stream, size_t len); 
 
     INH_STRING_DEF String * str_new (const char * stream); 
-
-    INH_STRING_DEF int str_fprint (const String * string, FILE * stream); 
-
-    INH_STRING_DEF int str_print (const String * string); 
-
-    INH_STRING_DEF int str_fput (const String * string, FILE * stream); 
-
-    INH_STRING_DEF int str_put (const String * string); 
 
     INH_STRING_DEF size_t str_copy_from (String * dest, const String * source, size_t start); 
 
@@ -75,15 +67,30 @@
 
     INH_STRING_DEF bool str_notequal (const String * str1, const String * str2);
 
-// End header code
+#ifndef INH_STRING_NO_IO
+
+    INH_STRING_DEF int str_fprint (const String * string, FILE * stream); 
+
+    INH_STRING_DEF int str_print (const String * string); 
+
+    INH_STRING_DEF int str_fput (const String * string, FILE * stream); 
+
+    INH_STRING_DEF int str_put (const String * string); 
+
+#endif
+
+// --- End header code --- //
 
 #endif // INH_INCLUDE_INH_STRING_H
 
 #ifdef INH_STRING_IMPLEMENTATION
 
 #include <assert.h>
-#include <stdio.h>
 #include <string.h>
+
+#ifndef INH_STRING_NO_IO
+#include <stdio.h>
+#endif
 
     /*
      * String constructor
@@ -123,6 +130,8 @@
         size_t len = strlen(stream);
         return str_new_len(stream, len);
     }
+
+#ifndef INH_STRING_NO_IO
 
     /*
      * Print out a String to a stream
@@ -172,6 +181,8 @@
     int str_put (const String * string) {
         return str_fput(string, stdout);
     }
+
+#endif // INH_STRING_NO_IO
 
     /*
      * Returns length copied, which is the minimum length of the source and destination
@@ -422,7 +433,7 @@
         return str_notequal_sub(str1, str2, 0, str1->len);
     }
 
-// Begin test code
+// --- Begin test code --- //
 
 #ifdef INH_STRING_TEST
 
@@ -639,7 +650,8 @@
 
         }
 
-        void str_run_tests (void) {
+        int main () {
+            // Run all tests    
             test_str_new();
             test_str_convert();
             test_str_print();
@@ -650,11 +662,11 @@
             test_join();
         }
 
-// End of test code
+// --- End of test code --- //
 
 #endif // INH_STRING_TEST
 
-// End of implementation
+// --- End of implementation --- //
 
 #endif // INH_STRING_IMPLEMENTATION
 
@@ -669,13 +681,13 @@ Programming language.
 
 Write the following to use the file as a normal header:
 
-	#include "inh_string.h"
+    #include "inh_string.h"
 
 and then in one and only one file, write the following after including any 
 files that depend on this header:
 
-	#define INH_STRING_IMPLEMENTATION
-	#include "inh_string.h"
+    #define INH_STRING_IMPLEMENTATION
+    #include "inh_string.h"
 
 == License ==
 
