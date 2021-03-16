@@ -8,6 +8,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#ifndef INH_STRING_NO_STDIO
+#include <stdio.h>
+#endif
+
 #ifndef INH_STRING_DEF
 #ifdef INH_STRING_STATIC
 #define INH_STRING_DEF static
@@ -20,64 +24,60 @@
      * The main length-encoded string structure.
      * The character data is stored in a variable-size array.
      */
-    typedef struct INH_String {
+    typedef struct INH_string {
         size_t len;
         char buffer[];
-    } INH_String;
+    } INH_string;
 
-    INH_STRING_DEF String * str_alloc(size_t len); 
+    INH_STRING_DEF INH_string * str_alloc(size_t len); 
 
-    INH_STRING_DEF String * str_realloc (String * str, size_t new_len); 
+    INH_STRING_DEF INH_string * str_realloc (INH_string * str, size_t new_len); 
 
-    INH_STRING_DEF String * str_new_len (const char * stream, size_t len); 
+    INH_STRING_DEF INH_string * str_new_len (const char * stream, size_t len); 
 
-    INH_STRING_DEF String * str_new (const char * stream); 
+    INH_STRING_DEF INH_string * str_new (const char * stream); 
 
-    INH_STRING_DEF size_t str_copy_from (String * dest, const String * source, size_t start); 
+    INH_STRING_DEF size_t str_copy_from (INH_string * dest, const INH_string * source, size_t start); 
 
-    INH_STRING_DEF size_t str_copy (String * dest, const String * source); 
+    INH_STRING_DEF size_t str_copy (INH_string * dest, const INH_string * source); 
 
-    INH_STRING_DEF String * str_dup (const String * string); 
+    INH_STRING_DEF INH_string * str_dup (const INH_string * string); 
 
-    INH_STRING_DEF String * str_sub (const String * source, size_t start, size_t end); 
+    INH_STRING_DEF INH_string * str_sub (const INH_string * source, size_t start, size_t end); 
 
-    INH_STRING_DEF String * str_append (String * string, char ch); 
+    INH_STRING_DEF INH_string * str_append (INH_string * string, char ch); 
 
-    INH_STRING_DEF String * str_append_new (const String * string, char ch); 
+    INH_STRING_DEF INH_string * str_append_new (const INH_string * string, char ch); 
 
-    INH_STRING_DEF size_t str_write_stream (const String * string, char * stream); 
+    INH_STRING_DEF size_t str_write_stream (const INH_string * string, char * stream); 
 
-    INH_STRING_DEF size_t str_write_stream_term (const String * string, char * stream); 
+    INH_STRING_DEF size_t str_write_stream_term (const INH_string * string, char * stream); 
 
-    INH_STRING_DEF char * str_convert (const String * str); 
+    INH_STRING_DEF char * str_convert (const INH_string * str); 
 
-    INH_STRING_DEF String * str_new_cat (const String * first, const String * next); 
+    INH_STRING_DEF INH_string * str_new_cat (const INH_string * first, const INH_string * next); 
 
-    INH_STRING_DEF String * str_cat (String ** dest, const String * source); 
+    INH_STRING_DEF INH_string * str_cat (INH_string ** dest, const INH_string * source); 
 
-    INH_STRING_DEF size_t str_cat_at (String * dest, const String * source, size_t index); 
+    INH_STRING_DEF size_t str_cat_at (INH_string * dest, const INH_string * source, size_t index); 
 
-    INH_STRING_DEF String * str_join (String * sep, size_t len, String * strings[]); 
+    INH_STRING_DEF INH_string * str_join (INH_string * sep, size_t len, INH_string * strings[]); 
 
-    INH_STRING_DEF bool str_equal_sub (const String * str1, const String * str2, size_t start, size_t end); 
+    INH_STRING_DEF bool str_equal_sub (const INH_string * str1, const INH_string * str2, size_t start, size_t end); 
 
-    INH_STRING_DEF bool str_notequal_sub (const String * str1, const String * str2, size_t start, size_t end); 
+    INH_STRING_DEF bool str_notequal_sub (const INH_string * str1, const INH_string * str2, size_t start, size_t end); 
 
-    INH_STRING_DEF bool str_equal (const String * str1, const String * str2); 
+    INH_STRING_DEF bool str_equal (const INH_string * str1, const INH_string * str2); 
 
-    INH_STRING_DEF bool str_notequal (const String * str1, const String * str2);
+    INH_STRING_DEF bool str_notequal (const INH_string * str1, const INH_string * str2);
 
-#ifndef INH_STRING_NO_IO
+    INH_STRING_DEF int str_fprint (const INH_string * string, FILE * stream); 
 
-    INH_STRING_DEF int str_fprint (const String * string, FILE * stream); 
+    INH_STRING_DEF int str_print (const INH_string * string); 
 
-    INH_STRING_DEF int str_print (const String * string); 
+    INH_STRING_DEF int str_fput (const INH_string * string, FILE * stream); 
 
-    INH_STRING_DEF int str_fput (const String * string, FILE * stream); 
-
-    INH_STRING_DEF int str_put (const String * string); 
-
-#endif // INH_STRING_NO_IO
+    INH_STRING_DEF int str_put (const INH_string * string); 
 
 // --- End header code --- //
 
@@ -88,15 +88,11 @@
 #include <assert.h>
 #include <string.h>
 
-#ifndef INH_STRING_NO_IO
-#include <stdio.h>
-#endif
-
     /*
      * String constructor
      */
-    String * str_alloc (size_t len) {
-        String * new;
+    INH_string * str_alloc (size_t len) {
+        INH_string * new;
         new = malloc(sizeof(*new) + len);
         if (new != NULL) {
             new->len = len;
@@ -104,8 +100,8 @@
         return new;
     }
 
-    String * str_realloc (String * str, size_t new_len) {
-        String * result;
+    INH_string * str_realloc (INH_string * str, size_t new_len) {
+        INH_string * result;
         result = realloc(str, sizeof(*result) + new_len);
         result->len = new_len;
         return result;
@@ -114,8 +110,8 @@
     /*
      * Constructs a new String from a C string that is len characters long
      */
-    String * str_new_len (const char * stream, size_t len) {
-        String * new = str_alloc(len);
+    INH_string * str_new_len (const char * stream, size_t len) {
+        INH_string * new = str_alloc(len);
         int i;
         for (i = 0; i < len; i++) {
             new->buffer[i] = stream[i];
@@ -126,12 +122,10 @@
     /*
      * Constructs a new String from a C string, which must be null-terminated.
      */
-    String * str_new (const char * stream) {
+    INH_string * str_new (const char * stream) {
         size_t len = strlen(stream);
         return str_new_len(stream, len);
     }
-
-#ifndef INH_STRING_NO_IO
 
     /*
      * Print out a String to a stream
@@ -140,7 +134,7 @@
      * On success, returns a non-negative value
      * On failure, returns EOF and sets the error indicator (see ferror()) on stream.
      */
-    int str_fprint (const String * string, FILE * stream) {
+    int str_fprint (const INH_string * string, FILE * stream) {
         size_t i;
         for (i = 0; i < string->len; i++) {
             char c = string->buffer[i];
@@ -158,14 +152,14 @@
      * Like str_fprint, but only prints to the stdout stream
      * See: str_fprint
      */
-    int str_print (const String * string) {
+    int str_print (const INH_string * string) {
         return str_fprint(string, stdout);
     }
 
     /*
      * String version of puts
      */
-    int str_fput (const String * string, FILE * stream) {
+    int str_fput (const INH_string * string, FILE * stream) {
         int result = str_fprint(string, stdout);
         if (result == 1) {
             // Only add the newline if the string could be printed
@@ -178,16 +172,14 @@
      * Like str_fput, but always prints to the stdout stream
      * See: str_fput
      */
-    int str_put (const String * string) {
+    int str_put (const INH_string * string) {
         return str_fput(string, stdout);
     }
-
-#endif // INH_STRING_NO_IO
 
     /*
      * Returns length copied, which is the minimum length of the source and destination
      */
-    size_t str_copy_from (String * dest, const String * source, size_t start) {
+    size_t str_copy_from (INH_string * dest, const INH_string * source, size_t start) {
         size_t len = (dest->len < source->len) ? dest->len : source->len;
         size_t i;
         for (i = start; i < start + len; i++) {
@@ -196,15 +188,15 @@
         return len;
     }
 
-    size_t str_copy (String * dest, const String * source) {
+    size_t str_copy (INH_string * dest, const INH_string * source) {
         return str_copy_from(dest, source, 0);
     }
 
     /*
      * Duplicate a string by allocating a copy of it.
      */
-    String * str_dup (const String * string) {
-       String * new = str_alloc(string->len);
+    INH_string * str_dup (const INH_string * string) {
+       INH_string * new = str_alloc(string->len);
        size_t copy_len = str_copy(new, string);
        assert(copy_len == new->len);
        return new;
@@ -216,9 +208,9 @@
      * start is inclusive
      * end is exclusive
      */
-    String * str_sub (const String * source, size_t start, size_t end) {
+    INH_string * str_sub (const INH_string * source, size_t start, size_t end) {
         assert(((int)end - (int)start) >= 0);
-        String * new = str_alloc(end - start);
+        INH_string * new = str_alloc(end - start);
         int i;
         for (i = start; i < end; i++) {
             new->buffer[i - start] = source->buffer[i];
@@ -233,7 +225,7 @@
      *
      * Note: use str_cat if you intend to add many characters to the end of the string, it's faster.
      */
-    String * str_append (String * string, char ch) {
+    INH_string * str_append (INH_string * string, char ch) {
         string = str_realloc(string, string->len + 1);
         string->buffer[string->len - 1] = ch;
         return string;
@@ -243,8 +235,8 @@
      * Allocate a new string that is the given string with ch appended to it.
      * Returns the new string pointer.
      */
-    String * str_append_new (const String * string, char ch) {
-        String * new = str_alloc(string->len + 1);
+    INH_string * str_append_new (const INH_string * string, char ch) {
+        INH_string * new = str_alloc(string->len + 1);
         str_copy(new, string);
         new->buffer[new->len - 1] = ch;
         return new; 
@@ -255,7 +247,7 @@
      *
      * Returns the number of characters written
      */
-    size_t str_write_stream (const String * string, char * stream) {
+    size_t str_write_stream (const INH_string * string, char * stream) {
         size_t i;
         for (i = 0; i < string->len; i++) {
             stream[i] = string->buffer[i];
@@ -266,7 +258,7 @@
     /*
      * Write a String to a char stream, but use null-termination
      */
-    size_t str_write_stream_term (const String * string, char * stream) {
+    size_t str_write_stream_term (const INH_string * string, char * stream) {
         size_t i;
         for (i = 0; (i < string->len) && string->buffer[i] != '\0'; i++) { 
             stream[i] = string->buffer[i];
@@ -280,7 +272,7 @@
      * Allocates a new char * with enough space to hold the whole String.
      * Returns a null-terminated character stream.
      */
-    char * str_convert (const String * str) {
+    char * str_convert (const INH_string * str) {
         char * result = malloc(str->len + 1);
         if (!result) {
             // Malloc failed
@@ -294,8 +286,8 @@
     /*
      * Concatenate two strings into a new string
      */
-    String * str_new_cat (const String * first, const String * next) {
-        String * new = str_alloc(first->len + next->len);
+    INH_string * str_new_cat (const INH_string * first, const INH_string * next) {
+        INH_string * new = str_alloc(first->len + next->len);
         size_t first_end = str_copy(new, first);
         size_t i;
         for (i = first_end; i < new->len; i++) {
@@ -308,7 +300,7 @@
      * Concatenate source onto dest
      * Returns dest
      */
-    String * str_cat (String ** dest, const String * source) {
+    INH_string * str_cat (INH_string ** dest, const INH_string * source) {
         size_t orig_len = (*dest)->len;
         *dest = str_realloc(*dest, orig_len + source->len);
 
@@ -323,7 +315,7 @@
     /*
      * Returns (index + source->len)
      */
-    size_t str_cat_at (String * dest, const String * source, size_t index) { 
+    size_t str_cat_at (INH_string * dest, const INH_string * source, size_t index) { 
         size_t i;
         for (i = 0; i < source->len; i++) {
             dest->buffer[index + i] = source->buffer[i];
@@ -335,7 +327,7 @@
      * Join a list of strings together with a separator string.
      * Returns a newly allocated string.
      */
-    String * str_join (String * sep, size_t len, String * strings[]) {
+    INH_string * str_join (INH_string * sep, size_t len, INH_string * strings[]) {
         // Find out how much string needs to be allocated
         size_t total_str_len = 0;
         size_t i;
@@ -344,7 +336,7 @@
         }
         total_str_len += sep->len * (len - 1);
 
-        String * new = str_alloc(total_str_len);
+        INH_string * new = str_alloc(total_str_len);
         if (new == NULL) {
             // alloc failed
             return new;
@@ -358,7 +350,7 @@
         size_t char_i = 0;
 
         // Add the first element
-        String * str = strings[0];
+        INH_string * str = strings[0];
         char_i = str_cat_at(new, str, char_i);
 
         // Add subsequent elements
@@ -374,7 +366,7 @@
     /*
      * Returns if a substring of str1 and str2 are equal
      */
-    bool str_equal_sub (const String * str1, const String * str2, size_t start, size_t end) { 
+    bool str_equal_sub (const INH_string * str1, const INH_string * str2, size_t start, size_t end) { 
         size_t sub_len = end - start;
         assert(sub_len >= 0);
         if (sub_len > str1->len || sub_len > str2->len) {
@@ -392,7 +384,7 @@
     /*
      * Returns if a substring of str1 and str2 are equal
      */
-    bool str_notequal_sub (const String * str1, const String * str2, size_t start, size_t end) { 
+    bool str_notequal_sub (const INH_string * str1, const INH_string * str2, size_t start, size_t end) { 
         assert(((int)end - (int)start) >= 0);
         size_t sub_len = end - start;
         if (sub_len > str1->len || sub_len > str2->len) {
@@ -410,7 +402,7 @@
     /*
      * Returns if two strings are completely equal, including length.
      */ 
-    bool str_equal (const String * str1, const String * str2) {
+    bool str_equal (const INH_string * str1, const INH_string * str2) {
         if (str1 == str2) {
             return true;
         }
@@ -423,7 +415,7 @@
     /*
      * Returns if two strings are not equal.
      */ 
-    bool str_notequal (const String * str1, const String * str2) {
+    bool str_notequal (const INH_string * str1, const INH_string * str2) {
         if (str1 == str2) {
             return false;
         }
@@ -453,6 +445,13 @@ Write the following to use the file as a normal header:
 and then in one and only one file, write the following after including any 
 files that depend on this header:
 
+    #define INH_STRING_IMPLEMENTATION
+    #include "inh_string.h"
+
+If you want the implementation to be private to the file that defines
+INH_STRING_IMPLEMENTATION, you can write the following instead:
+
+    #define INH_STRING_STATIC
     #define INH_STRING_IMPLEMENTATION
     #include "inh_string.h"
 

@@ -2,10 +2,10 @@
 #include "inh_string.h"
 
 void test_str_cat (void) {
-    String * s1 = str_new("con");
-    String * s2 = str_new("cat");
-    String * s3 = str_new("concat");
-    String * s4 = str_new_cat(s1, s2);
+    INH_string * s1 = str_new("con");
+    INH_string * s2 = str_new("cat");
+    INH_string * s3 = str_new("concat");
+    INH_string * s4 = str_new_cat(s1, s2);
     assert(s4 != NULL);
     assert(str_notequal(s1, s3));
     assert(str_equal(s3, s4));
@@ -22,18 +22,18 @@ void test_str_cat (void) {
 
 void test_str_dup (void) {
     // test str_dup and str_copy
-    String * s1 = str_new("%appdata%");
+    INH_string * s1 = str_new("%appdata%");
     assert(s1 != NULL);
-    String * s2 = str_dup(s1);
+    INH_string * s2 = str_dup(s1);
     assert(s2 != NULL);
     assert(str_equal(s1, s2));
-    String * s3 = str_new("_________ and other stuff");
+    INH_string * s3 = str_new("_________ and other stuff");
     str_copy(s3, s1);
     assert(str_equal_sub(s1, s3, 0, s1->len));
     assert(!str_equal(s1, s3));
 
-    String * s4 = str_new("cheese");
-    String * s5 = str_dup(s4);
+    INH_string * s4 = str_new("cheese");
+    INH_string * s5 = str_dup(s4);
     assert(str_equal(s4, s5));
     str_put(s4);
     str_put(s5);
@@ -65,7 +65,7 @@ void test_str_convert (void) {
     size_t i;
     for (i = 0; i < length; i++) {
 	char * c1 = cstrings[i];
-	String * s = str_new(c1);
+	INH_string * s = str_new(c1);
 	assert(s != NULL);
 	char * c2 = str_convert(s);
 	assert(strcmp(c1, c2) == 0);
@@ -77,18 +77,18 @@ void test_str_new (void) {
     // Test str_new_len AND str_new
 
     // zero-length string
-    String * s0 = str_new_len("cheese", 0);
+    INH_string * s0 = str_new_len("cheese", 0);
     assert(s0->len == 0);
 
     // string as substring of c-string
-    String * s1 = str_new_len("cheese", 3);
+    INH_string * s1 = str_new_len("cheese", 3);
     assert(s1->len == 3);
     assert(s1->buffer[0] == 'c');
     assert(s1->buffer[1] == 'h');
     assert(s1->buffer[2] == 'e');
 
     // string from whole c-string
-    String * s2 = str_new("cheese");
+    INH_string * s2 = str_new("cheese");
     assert(s2->len == 6);
     assert(s2->buffer[0] == 'c');
     assert(s2->buffer[1] == 'h');
@@ -98,7 +98,7 @@ void test_str_new (void) {
     assert(s2->buffer[5] == 'e');
 
     // zero-length c-string
-    String * s3 = str_new("");
+    INH_string * s3 = str_new("");
     assert(s3->len == 0);
 
     free(s0);
@@ -111,7 +111,7 @@ void test_str_print (void) {
     printf("The next 3 lines should be the same:\n");
 
     char * c1 = "Hello, world!";
-    String * s1 = str_new(c1);
+    INH_string * s1 = str_new(c1);
 
     puts(c1);
     str_put(s1); 
@@ -124,11 +124,11 @@ void test_str_print (void) {
 #define  eq(_s1, _s2) assert( str_equal(_s1, _s2)); assert(!str_notequal(_s1, _s2))
 void test_str_equal (void) {
     // Test str_equal_sub AND str_equal AND str_notequal_sub AND str_notequal
-    String * s1 = str_new("string 1");
-    String * s2 = str_new("string 2");
-    String * s3 = str_new("a 3rd string");
-    String * s4 = str_new("a 3rd string");
-    String * s5 = str_new("");
+    INH_string * s1 = str_new("string 1");
+    INH_string * s2 = str_new("string 2");
+    INH_string * s3 = str_new("a 3rd string");
+    INH_string * s4 = str_new("a 3rd string");
+    INH_string * s5 = str_new("");
 
     // Test self-equality
     eq(s1, s1);
@@ -172,13 +172,13 @@ void test_str_equal (void) {
 #undef neq
 
 void test_str_sub (void) {
-    String * s1 = str_new("stinky");
+    INH_string * s1 = str_new("stinky");
 	assert(s1 != NULL);
 
-    String * s2 = str_sub(s1, 1, 4);
+    INH_string * s2 = str_sub(s1, 1, 4);
 	assert(s2 != NULL);
 
-    String * s3 = str_new("tin");
+    INH_string * s3 = str_new("tin");
 	assert(s3 != NULL);
 
     assert(str_equal(s2, s3));
@@ -189,8 +189,8 @@ void test_str_sub (void) {
 }
 
 void test_join (void) {
-    String * sep = str_new(", ");
-    String * strings[] = {
+    INH_string * sep = str_new(", ");
+    INH_string * strings[] = {
 	str_new("frog"),
 	str_new("newt"),
 	str_new("toad"),
@@ -198,8 +198,8 @@ void test_join (void) {
     };
     size_t strings_len = sizeof(strings) / sizeof(strings[0]);
 
-    String * result = str_join(sep, strings_len, strings);
-    String * expected = str_new("frog, newt, toad, lizard");
+    INH_string * result = str_join(sep, strings_len, strings);
+    INH_string * expected = str_new("frog, newt, toad, lizard");
     str_put(result);
     str_put(expected);
     assert(str_equal(result, expected));
