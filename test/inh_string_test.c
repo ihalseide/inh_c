@@ -1,5 +1,5 @@
 #define INH_STRING_IMPLEMENTATION
-#include "inh_string.h"
+#include "../inh_string.h"
 
 void test_str_cat (void) {
     INH_string * s1 = str_new("con");
@@ -175,7 +175,7 @@ void test_str_sub (void) {
     INH_string * s1 = str_new("stinky");
 	assert(s1 != NULL);
 
-    INH_string * s2 = str_sub(s1, 1, 4);
+    INH_string * s2 = str_new_sub(s1, 1, 4);
 	assert(s2 != NULL);
 
     INH_string * s3 = str_new("tin");
