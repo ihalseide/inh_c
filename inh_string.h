@@ -434,9 +434,9 @@ bool str_notequal (const INH_string * str1, const INH_string * str2) {
 
 #endif // INH_STRING_IMPLEMENTATION
 
-/* 
+/***
 
-== About ==
+= inh_string.h 0.1.0 =
 
 This is a single file header for the use of length-encoded Strings in the C
 Programming language.
@@ -445,20 +445,33 @@ Programming language.
 
 Write the following to use the file as a normal header:
 
-#include "inh_string.h"
+ #include "inh_string.h"
 
 and then in one and only one file, write the following after including any 
 files that depend on this header:
 
-#define INH_STRING_IMPLEMENTATION
-#include "inh_string.h"
+ #define INH_STRING_IMPLEMENTATION
+ #include "inh_string.h"
 
 If you want the implementation to be private to the file that defines
 INH_STRING_IMPLEMENTATION, you can write the following instead:
 
-#define INH_STRING_STATIC
-#define INH_STRING_IMPLEMENTATION
-#include "inh_string.h"
+ #define INH_STRING_STATIC
+ #define INH_STRING_IMPLEMENTATION
+ #include "inh_string.h"
+
+== Changelog ==
+
+All notable changes to this project will be documented in this section.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+This project uses semantic versioning [https://semver.org].
+
+=== [0.1.0] - 2021-03-20 ===
+==== Added ====
+* This changelog
 
 == License ==
 
@@ -482,5 +495,5 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-*/
+***/
 
