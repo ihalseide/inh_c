@@ -1,12 +1,17 @@
-// (For more information such as usage and the license see the bottom of this file).
+// (For more information, see the bottom of this file).
 
 #ifndef INH_INCLUDE_INH_STRING_H
 #define INH_INCLUDE_INH_STRING_H
 
 // --- Begin header code --- //
 
+#ifndef ING_STRING_NO_STDLIB
 #include <stdlib.h>
+#endif
+
+#ifndef INH_STRING_NO_STDBOOL
 #include <stdbool.h>
+#endif
 
 #ifndef INH_STRING_NO_STDIO
 #include <stdio.h>
@@ -37,13 +42,13 @@ INH_STRING_DEF INH_string * str_new_len (const char * stream, size_t len);
 
 INH_STRING_DEF INH_string * str_new (const char * stream); 
 
-INH_STRING_DEF size_t str_copy_from (INH_string * dest, const INH_string * source, size_t start); 
-
-INH_STRING_DEF size_t str_copy (INH_string * dest, const INH_string * source); 
+INH_STRING_DEF INH_string * str_new_sub (const INH_string * source, size_t start, size_t end); 
 
 INH_STRING_DEF INH_string * str_dup (const INH_string * string); 
 
-INH_STRING_DEF INH_string * str_sub (const INH_string * source, size_t start, size_t end); 
+INH_STRING_DEF size_t str_copy_from (INH_string * dest, const INH_string * source, size_t start); 
+
+INH_STRING_DEF size_t str_copy (INH_string * dest, const INH_string * source); 
 
 INH_STRING_DEF INH_string * str_append (INH_string * string, char ch); 
 
@@ -208,7 +213,7 @@ INH_string * str_dup (const INH_string * string) {
  * start is inclusive
  * end is exclusive
  */
-INH_string * str_sub (const INH_string * source, size_t start, size_t end) {
+INH_string * str_new_sub (const INH_string * source, size_t start, size_t end) {
     assert(((int)end - (int)start) >= 0);
     INH_string * new = str_alloc(end - start);
     int i;
